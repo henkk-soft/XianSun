@@ -1,0 +1,6 @@
+ function MessgeBox(info){
+      var v = view.dialog {
+         url: "Others/msgbox/msgbox.html", 
+         parameters: info 
+      };
+}

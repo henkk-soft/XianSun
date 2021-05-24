@@ -1,0 +1,60 @@
+
+namespace Material 
+{
+
+  function Ripple {
+
+   // ripple - expanding disk animation     
+
+    var x1, y1, x2, y2;
+    var x,y;
+    var radii = 0.0;    
+    var maxradii;
+    var fromColor;
+    var toColor;
+    var currentColor;
+      
+    function distance( xt,yt ) { return Math.sqrt((xt - x)*(xt - x) + (yt - y)*(yt - y)); }
+
+    function init(el,evt) {
+      (x1, y1, x2, y2) = el.box(#rect,#border,#self);
+      x = evt.x; y = evt.y;
+      maxradii = Float.max( distance(x1,y1), distance(x1,y2), distance(x2,y1), distance(x2,y2) ); 
+    }
+
+    function paint(gfx) {
+      gfx.pushLayer(#background-area);
+      gfx.fillColor(fromColor);
+      gfx.rectangle(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
+      gfx.fillColor(currentColor);
+      gfx.ellipse(x,y,radii);
+      gfx.popLayer();
+    }
+
+    this << event mousedown (evt) 
+    {
+      fromColor = this.style["-ripple-from-color"];
+      toColor = this.style["-ripple-to-color"];
+      init(this,evt);
+                         
+      function step(progress) {
+        radii = progress * maxradii;
+        //currentColor = Color.morph(fromColor,toColor,progress);
+        if(progress<0.5)
+          currentColor = color(toColor.r,toColor.g,toColor.b,progress*2);
+        else currentColor = color(toColor.r,toColor.g,toColor.b,2-progress*2);
+        this.refresh();
+      }
+      this.paintContent = paint;
+      this.animate( step, 200ms );
+      return false;
+    }
+  }
+
+
+  /*function Toggle()
+  {
+    this.$append(<knob/>);
+  }*/
+
+}

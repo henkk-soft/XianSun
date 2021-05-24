@@ -1,0 +1,188 @@
+<head>
+    <META http-equiv="Content-Type" content="text/html; charset=utf-8">
+      <style>
+        @import url(../Others/Material/material.css);
+        @import url(../Others/scroll.css);
+        body { flow:horizontal; border-spacing:1em;  }
+        table#list {
+      font:system;
+      font-size: 15px;
+      height:*; width:300px; 
+      border:1px solid black; 
+      flow:table-fixed; 
+    }
+    
+    table#list > tbody, table > tbody { border-spacing:0; }
+
+    table#list > tbody 
+    { 
+      overflow: scroll-indicator;
+      size:*;
+      
+    }
+
+    table#list > tbody > tr {
+      behavior:form; 
+      line-height:50px;
+    } 
+    
+    table#list > tbody > tr.highlighted {
+      background: #da9;
+    }
+
+    table#list > tbody > tr:hover {
+      background: #bcd;
+    }
+
+    table#list > tbody > tr:current {
+      background:rgb(64, 139, 252);
+    } 
+    table#list > tbody
+    {
+      context-menu: selector(menu#context);
+    }
+    table#list td:nth-child(2),   
+    table#list th:nth-child(2) { width:40px; }
+    table#list td:last-child,   
+    table#list th:last-child { width:*;
+      height:50px;
+white-space:nowrap;
+
+overflow:hidden;
+
+text-overflow:ellipsis; 
+}
+    
+    table#taskinfo td:nth-child(3), th:nth-child(3)  { }
+    table#taskinfo {
+      height:*; 
+      flow:table-fixed;
+    }
+    table#taskinfo > tbody { 
+      overflow: scroll-indicator;
+      size:*;
+    }
+  </style>
+
+      <script type="text/tiscript">    
+var nowid="0";
+  include "../Others/vlist.tis";
+  
+  var alltask=view.GetTask();
+  var taskcount=alltask.length;
+  var vlist;
+  var records;
+  function self.ready() {
+    if(taskcount>0){
+     
+    records=new Array(taskcount);
+    for(var i = 0; i < taskcount; ++i)
+    { records[i] = {id: alltask[i]["id"], imageUrl:imageUrl(alltask[i]["status"]), title:alltask[i]["title"] };}
+    function setupItemView(recordNo, record, itemEl) {
+      itemEl.$(img).attributes["src"] = record.imageUrl; 
+      itemEl.attributes["id"] = record.id; 
+    }    
+    vlist = VirtualList {
+      container     : $(table#list>tbody),
+      setupItemView : setupItemView,
+      bufferSize    : 15 
+    };
+    vlist.value = records;
+    }
+  }
+
+  function imageUrl(s) {
+    switch(s) {
+      case "sleep": return "../../img/正常.png";
+      case "overdue": return "../../img/过期.png";
+      case "running": return "../../img/运行中.png";
+      case "wait": return "../../img/等待.png";
+      case "timeout": return "../../img/超时.png";
+      case "error": return "../../img/超时.png";
+      default:
+        return "../../img/正常.png";
+    }
+  }
+  event click $(li) (evt,li) {
+    if(li.id=="taskedit"){
+      view.window{
+        url: self.url("../_edit.html"),
+        type:View.FRAME_WINDOW,
+        state: View.WINDOW_SHOWN,
+        client: true,
+        parameters: nowid,
+        alignment:5,
+        width: 790,
+        height: 550
+      };
+    }else if(li.id=="taskdel"){
+      delete records[vlist.currentIndex];
+      view.DeleteTask(nowid);
+      $(table#taskinfo>tbody).html ="";
+    }else if(li.id=="taskref"){
+      view.RefTask();
+    }
+    
+  }
+
+  event mousedown $(table#list> tbody > tr) (evt,tr) {
+    nowid=tr.id;
+    var taskhis=view.GetTaskHis(nowid);
+    var listcount=taskhis.length;
+    var tb=$(table#taskinfo>tbody);
+    tb.html ="";
+    for(var i=0;i<listcount;i++){
+      var tr = new Element(#tr);
+      tr.append(new Element(#td, taskhis[i]["date"] ));
+      tr.append(new Element(#td, taskhis[i]["status"] ));
+      tr.append(new Element(#td, taskhis[i]["info"] ));
+      tb.append(tr);      
+    }
+    
+  }
+  </script>
+  </head>
+  <body >
+      <table#list>
+        <thead hidden>
+          <tr><th(id) hidden>ID</th><th>状态</th><th(title)>名称</th></tr>
+        </thead>
+        <tbody>
+          <tr><td(id) hidden></td><td><img style="width: 25px;height: 25px;margin-left: 5px;"/></td><td(title)></td></tr>
+        </tbody>
+      </table>
+      <table#taskinfo >
+        <thead>
+           <tr>
+             <th style="width:60dip;">日期</th>
+             <th style="width:50dip;">状态</th>
+             <th style="width:320dip;">内容</th>             
+             
+           </tr>
+        </thead>
+        <tbody>
+           
+        </tbody>
+      </table>
+
+    <popup> 
+      <menu.context id="context">
+
+        <li#taskedit>修 改</li>
+        <li#taskdel>删 除</li>
+        <li#taskref hidden>更 新</li>
+        <li hidden>排序方式
+            <menu>
+              <li#changetime>变化时间</li>
+              <li#addtime>加入时间</li>
+              <li#runtime>上次运行时间</li>
+              <li#runtime>下次运行时间</li>
+            </menu>  
+        </li>
+        
+      </menu>
+      
+
+    </popup>      
+  </body>
+  

@@ -1,0 +1,96 @@
+<head>
+    <META http-equiv="Content-Type" content="text/html; charset=utf-8">
+      <style>
+        @import url(../Others/Material/material.css);
+        @import url(../style.css);
+      </style>
+      <script type="text/tiscript">
+          include "../Others/Material/material.tis";
+         include "../Others/Material/material_color.tis";
+         include "../Others/msgbox/msgbox.tis"
+         $(button#clear).onClick = function()
+        {
+          Clear();
+        }
+        function fillSelect(){
+          var list=view.GetSound();
+          var select = $(select(msgwav));
+          select.options.clear();
+          select.options.$append(<option value=不使用>不使用</option>);
+          for(var (i,wav) in list)
+           select.options.$append(<option value={wav}>{wav}</option>);
+     }
+     fillSelect();
+        $(button#get).onClick = function()
+        {
+          loadshow();
+          view.ConfigUp(JSON.stringify($(form).value));
+        }
+        $(form).value =JSON.parse(view.GetConfig());
+       function Clear(){
+        $(form).value = {
+          runtime:5,
+          runnum:5,
+          runstep:1,
+          email:"",
+          emailpass:"",
+          emailto:"",
+          msgwav:"",
+          msgformat:"#标@题# 已更新\\n 此次内容：#全@文#\\n 上次内容：#上@文#",
+          softopen:0,
+          softmin:0,
+          softclose:0
+        }
+       }
+       
+      </script>
+  </head>
+  <body>
+    <br>
+    <main.material style="margin-left: 120px;margin-right: 120px;">
+        <section>
+          <H1 align="center" style="color:#0092ff ;margin-top: -2px;">设 置</H1>
+          <br>
+          <form>
+            <div style="width: 460px;">
+              <h3>任务运行设置</h3>
+              <a>超时时间(s):</a>&emsp;<input(runtime) type="number" min="1" max="20" step="1" value="5">&emsp;
+              <a>最大并行任务数</a>&emsp;<input(runnum) type="number" min="1" max="20" step="1" value="5">&emsp;
+              <a>任务最小间隔(s)</a>&emsp;<input(runstep) type="number" min="1" max="10" step="1" value="1">&emsp;
+            </div>
+            <br>
+            <div>
+              <h3>邮箱设置</h3>
+              <editbox(email) caption="邮箱地址..."  style="width: 150px;" value=" "/>
+              <editbox(emailpass) caption="邮箱密码..."  style="width: 150px; position:relative;margin-top: -27px;left: 160px;" value=" "/>
+              <editbox(emailto) caption="发送地址..."  style="width: 150px; position:relative;margin-top: -27px;left: 320px;" value=" "/>
+            </div>
+            <br>
+            <div>
+              <h3>通知设置</h3>
+              <a>通知音效</a>
+              <select(msgwav) style="width: 100px;">
+                <OPTION VALUE="不使用" >不使用</OPTION>
+            </select>
+              <editbox(msgformat) caption="通知格式..."  style="width: 350px;position:relative;margin-top: -27px;left: 170px;" value="e"/>
+            </div>
+            <br>
+            <div>
+              <h3>软件设置</h3>
+              <a>开机自启:</a><toggle(softopen)  style="position:relative;margin-top: -17px;left: 65px;"/>
+              <p style="position:relative;margin-top: -15px;left: 120px;">打开软件时最小化到任务栏:</p><toggle(softmin)  style="position:relative;margin-top: -28px;left: 320px;"/><br>
+              <a>点击关闭最小化到任务栏(需要重启软件):</a><toggle(softclose)  style="position:relative;margin-top: -16px;left: 230px;"/>
+            </div>
+            <br><br>
+            <div align="center" >
+              <button#get style="width:50px;">确定</button>&emsp;
+              <button#clear style="width:50px;">重置</button>
+              </div>
+        </form>
+        
+        </section>
+        
+      </main>
+      
+  </body>
+  

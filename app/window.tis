@@ -1,0 +1,43 @@
+var now=1;
+view.isResizeable = false;
+view.windowIcon = self.url("../img/icon_32x32.png");
+view.trayIcon {
+    image: self.loadImage(self.url("../img/icon_32x32.png")),
+    text: "Web Monitor Go"
+};
+function CloseWindow(){
+    view.trayIcon(#remove);
+            view.close();
+}
+function ChangeWindow() {
+    if(now==1){
+    view.state = View.WINDOW_HIDDEN;
+    now=0;
+    }
+    else{
+        view.state = View.WINDOW_SHOWN;
+        now=1;
+    }
+}
+//view.state = View.WINDOW_HIDDEN;
+view << event trayicon-click (evt) {
+    if(evt.buttons==1)
+    {
+        ChangeWindow();
+    }
+    else if(evt.buttons==2)
+    {
+        var (sx,sy) = view.box(#position,#client,#screen);
+        self.popup($(menu#tray), 2, evt.x - sx, evt.y - sy );
+    }     
+}
+event click $(btn.close){
+    CloseWindow();//close
+}
+event click $(menu#tray > li#reveal) {
+            ChangeWindow();
+}   
+event click $(menu#tray > li#exit) {
+    CloseWindow();
+            
+}   

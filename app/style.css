@@ -1,0 +1,113 @@
+html {
+    font: system;
+    color: rgb(0, 0, 0);
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+header#window {
+    height: 30dip;
+    flow: horizontal;
+    font: system;
+    background-color: #fafafa;
+}
+
+header#window>icon {
+    margin: * 5dip;
+    width: 16dip;
+    height: 16dip;
+    display: inline-block;
+    text-align: center;
+    background-image: url(../img/icon_32x32.png) cover;
+    background-size: cover;
+}
+
+header#window>caption {
+    width: *;
+    text-align: center;
+    margin: * 0;
+}
+
+header#window>btn {
+    background-color: #fafafa;
+    behavior: clickable;
+    /*可点击*/
+    width: 30dip;
+    font-family: "Marlett";
+    /*该字体显示按钮符号*/
+    display: inline-block;
+    font-size: 16dip;
+    padding: 4dip;
+    text-align: center;
+}
+
+header#window>btn.close:hover {
+    background-color: #ff4b00;
+}
+
+header#window>btn:hover {
+    background-color: #008cff83;
+    color: #fff;
+}
+
+main {
+    size: *;
+    flow: horizontal;
+    background-color: #fff;
+}
+
+frameset {
+    background-color: #fff;
+}
+
+div#right {
+    font: system;
+    border: none;
+    size: *;
+    overflow-y: scroll-indicator;
+}
+div#left {
+    font: system;
+    border: none;
+    size: *;
+    overflow-y: scroll-indicator;
+    background: #0092ff;
+    width:15em; 
+}
+p#title{
+    font: system;
+    color: rgb(255, 255, 255);
+    font-size:30px;
+    font-weight:bold;
+    text-align:center;
+}
+.Lbutton{
+    height: 80px;
+    background: #0092ff;
+    cursor: pointer; 
+    color: rgb(255, 255, 255);
+}
+.center-vertical{
+    position: relative;
+    top:35%;
+  }
+.Lbutton b{
+    display: inline-block;
+    font: size 13px;
+    margin-left:10px;
+    
+}
+.Lbutton img{
+    display: inline-block;
+    vertical-align: middle;
+    margin-left:40px;
+    width: 25px;
+}
+.Lbutton:hover p{
+    color: rgb(0, 0, 0);
+}
+
+[hidden] { display:none !important; }

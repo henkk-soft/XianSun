@@ -1,0 +1,119 @@
+<head>
+  <META http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <style>
+      @import url(../Others/Material/material.css);
+      @import url(../Others/date-plus/date-plus.css);
+      @import url(../style.css);
+    </style>
+    <script type="text/tiscript">
+        include "../Others/Material/material.tis";
+       include "../Others/Material/material_color.tis";
+       include "../Others/msgbox/msgbox.tis"
+       $(button#set).onClick = function()
+      {
+        Clear();
+      }
+      
+      $(button#get).onClick = function()
+      {
+        if($(form).value.address==""||$(form).value.timestep==""){
+          MessgeBox("请完善信息");
+        }else{
+        loadshow();
+        view.AddTask(JSON.stringify($(form).value));
+        Clear();}
+      }
+      $(button#test).onClick = function()
+      {
+        if($(form).value.address==""||$(form).value.timestep==""){
+          MessgeBox("请完善信息");
+        }else{
+        loadshow();
+        view.TestNet(JSON.stringify($(form).value));}
+      }
+      
+     function Clear(){
+      $(form).value = {
+        address:"",
+        ishight:false,
+        cookie:"",
+        title:"",
+        csschoose:"",
+        xpathchoose:"",
+        type:"str",
+        con:"ischange",
+        istext:"",
+        timeline:"",
+        timestep:"5m",
+        ismessgesoft:false,
+        ismessgewin:false,
+        ismessgeemail:false,
+        history:"runtime",
+        historynum:5
+      }
+      $(input|date-range(timeline)).value=[new Date(),new Date()];
+     }
+    
+    </script>
+</head>
+<body>
+  <br>
+  <main.material style="margin-left: 75px;margin-right: 75px;">
+      <section>
+        <H1 align="center" style="color:#0092ff ;margin-top: -2px;">添加任务</H1>
+        <form>
+          <editbox(address) caption="输入网址..."  style="width: 600px;"/>
+          <checkbox(ishight) style="position:relative;margin-top: 25x;left: 530px;">加强模式</checkbox>
+          <editbox(title)) caption="标题(默认网页标题)..."  style="width: 150px;position:relative;margin-top: -20px;"/>
+          <editbox(cookie))  caption="Cookie..." style="width: 350px; position:relative;margin-top: -26px;left: 160px;"/>
+          <br><br>
+          <label>选择器(二选一)：</label>
+          <br><br>
+          <editbox(csschoose)) caption="CSS选择器..."  style="width: 300px;"/>
+          <editbox(xpathchoose))  caption="xpath选择器..." style="width: 300px; position:relative;margin-top: -26px;left: 320px;"/>
+          <br>
+          <label>数据类型：&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;</label><label >通知条件：</label>
+          <br><br>
+          <hbox >
+            <radio(type) value="str" checked>文字</radio>
+            <radio(type) value="num">数字</radio>
+            <div style="width: 50px;"></div>
+            <radio(con)) value="ischange" checked >改变</radio>
+            <radio(con) value="isadd">增加</radio>
+            <radio(con) value="ismut">减少</radio>
+          </hbox>
+          <editbox(istext) hidden value="" caption="文字条件..." style="width: 200px; position:relative;margin-top: -25px;left: 400px;"/>
+          <br><br>
+          <label>运行时间：</label><input|date-range(timeline) time novalue="range empty">
+          &emsp;&emsp;&emsp;&emsp;<label>运行间隔(hms)：</label><editbox(timestep)  style="width: 50px; position:relative;margin-top: -27px;left: 495px;" value="5m"/>
+          <br><br>
+          <hbox >
+          <label>通知方式：</label>&emsp;&emsp;
+          <checkbox(ismessgesoft) hidden>软件通知</checkbox>&emsp;
+          <checkbox(ismessgewin)>WIN通知</checkbox>&emsp;
+          <checkbox(ismessgeemail) hidden>邮件通知</checkbox>
+          </hbox>
+          <br><br>
+          <hbox >
+            <label>历史记录：</label>&emsp;&emsp;
+            <radio(history) value="runtime" checked>每次运行</radio>
+            <radio(history) value="changetime">每次改变</radio>
+            <radio(history) hidden value="messgetime">每次通知</radio>
+            <label>&emsp;&emsp;&emsp;&emsp;最大记录数：</label>&emsp;&emsp;
+            <input(historynum) type="number" min="2" max="30" step="1" value="5" style=" position:relative;margin-top: -4px">
+          </hbox>
+          
+          <br><br>
+          <div align="center" >
+            <button#test style="width:50px;">测试</button>&emsp;
+            <button#get style="width:50px;">确定</button>&emsp;
+            <button#set style="width:50px;">清除</button>
+            
+            </div>
+      </form>
+      
+      </section>
+      
+    </main>
+    
+</body>

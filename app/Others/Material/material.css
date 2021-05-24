@@ -1,0 +1,253 @@
+@import url(material-colors.css);
+
+.material button { style-set: m-button; }
+.material button.flat { style-set: m-button-flat; }
+
+@set m-button < std-button-base {
+  :root { 
+    background: var(ascent1,#000); 
+    box-shadow: #aaa 1dip 1dip 1dip;
+    border-radius: 2dip;
+    aspect: Material.Ripple url(material.tis);
+    -ripple-from-color: var(lighten3,#000);
+    -ripple-to-color: var(lighten5,#000);
+    cursor:pointer;
+    padding:0.5em 1em;
+  }
+  :root:hover { background: var(lighten3,#000); }
+  :root:active { background: var(lighten5,#000); }
+
+  :root:tab-focus { outline:1dip dashed color(normal) -4dip; }
+}
+
+@set m-button-flat < std-button-base {
+  :root { 
+    background: transparent; 
+    padding:0.5em 1em;
+    aspect: Material.Ripple url(material.tis);
+    -ripple-from-color: var(lighten5,#000);
+    -ripple-to-color: var(lighten3,#000);
+    cursor:pointer;
+  }
+  :root:hover { background: var(lighten5,#000); }
+  :root:active { background: var(lighten3,#000); }
+
+  :root:tab-focus { outline:1dip dashed color(normal) 0dip; }
+}
+
+.material editbox { style-set: m-editbox; }
+
+@set m-editbox {
+  :root {
+    overflow:hidden;
+    display:block;
+    background:transparent;    
+    padding-top:0.5em;
+    border-bottom:1dip solid #bbb;
+    width:*;
+    foreground: url(stock:block) center bottom no-repeat;
+    foreground-size: 0% 2dip; 
+    foreground-clip: border-box;
+    fill: color(normal);
+    transition: foreground-size quad-out 160ms; 
+
+    flow:text; 
+    cursor:text; 
+    white-space:pre; 
+    behavior:edit; 
+    line-height:1.6em;
+
+    text-selection: #000 transparent;
+  }
+  :root::marker { 
+    margin-top:0.5em;
+    line-height:1.6em; 
+    width:*; 
+    transform-origin: 0% 0%; 
+    color:#777; 
+    content: attr(caption); 
+    transition: transform quad-out 160ms; 
+  }
+
+  :root:owns-focus::marker, 
+  :root:not(:empty)::marker
+  { 
+    transform: translate(0,-80%) scale(0.7);  
+  }
+
+  :root:owns-focus
+  {
+    foreground-size: 100% 2dip; 
+  }
+
+  :root:focus {
+    text-selection: #000 color(lighten4);
+  }
+
+}
+
+.material checkbox { style-set: m-checkbox; }
+
+@set m-checkbox {
+  :root {
+    behavior:check;
+    display:block;
+    width:max-content;
+    line-height:1.4em;
+    padding: * 0.6em * 1.8em;
+    cursor:pointer;
+  }
+
+  :root::marker {
+    size:12dip;
+    border:2dip solid #bbb;
+    border-radius: 3dip;
+    margin: * * * 0;
+    background: url(path:M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z) 50% 50% no-repeat;
+    background-size: 0.8em;
+    background-color: #ffffff;
+    fill:transparent;
+    stroke:none;
+    transition: border-color linear 160ms, background-color linear 160ms;
+  }
+
+  :root:checked::marker {
+    fill:#ffffff;
+    background-color:color(normal);
+    border-color:color(normal);
+  }
+
+  :root:tab-focus { outline:1dip dashed color(normal) 2dip; }
+}
+
+
+.material radio { style-set: m-radio; }
+
+
+
+@set m-radio {
+  :root {
+    behavior:radio;
+    display:block;
+    width:max-content;
+    line-height:1.4em;
+    padding: * 0.6em * 1.8em;
+    cursor:pointer;
+  }
+
+  :root::marker {
+    size:13dip;
+    border:2dip solid #bbb;
+    border-radius: 8dip;
+    margin: * * * 0;
+    background: url(stock:disk) 50% 50% no-repeat;
+    background-size: 8dip;
+    fill: transparent;
+    transition: border-color linear 160ms, fill linear 160ms;
+  }
+
+  :root:checked::marker {
+    fill:color(normal);
+    border-color:color(normal);
+  }
+
+  :root:tab-focus { outline:1dip dashed color(normal) 2dip; }
+
+}
+
+.material toggle { style-set: m-toggle; }
+
+@set m-toggle {
+  :root {
+    behavior:check;
+    display:block;
+    width:3em;
+    height:1em;
+    padding:0.2em;
+    border-radius:0.6em;
+    background-clip:content-box;
+    background:#ddd;
+    cursor:pointer;
+    transition: background-color linear 160ms;
+  }
+
+  :root:checked {
+    background-color:color(lighten4); 
+  }
+
+  :root::marker // the knob
+  {
+    display:block;
+    background-color:#bbb; 
+    size:17dip;
+    margin: 0 * 0 0;
+    border-radius:9dip;
+    box-shadow: #aaa 1dip 1dip 1dip;
+    transform: translate(0em,0);
+    transition: background-color linear 160ms, transform quad-out 160ms;
+  }
+
+  :root:checked::marker {
+    transform: translate(2em,0);
+    background-color:var(normal,#000);
+  }
+
+  :root:tab-focus { outline:1dip dashed color(normal) 2dip; }
+}
+
+@set m-slider < std-hslider-base{
+  :root {
+    background:#ddd;
+    padding:7dip;
+    background-clip: content-box;
+    background-image: url(stock:block);
+    background-repeat:no-repeat;
+    background-position:0 0;
+    fill:color(normal);
+    width:8em;
+    height:2dip;
+    background-size: var(slider-position,0px) 2dip; // "value" part 
+  }
+  :root > knob {
+    style-set: m-slider;
+    size:16dip;
+    box-shadow: #aaa 1dip 1dip 1dip;
+    background:color(normal);
+    foreground: none; 
+    border:none;
+    border-radius:8dip;
+    padding:0;
+  }
+
+  :root > knob::marker {
+    content:attr(value);
+    size:32dip 36dip;
+    line-height:32dip;
+    text-align:center;
+    background: no-repeat url(path:M8 2.1c1.1 0 2.2 0.5 3 1.3 0.8 0.9 1.3 1.9 1.3 3.1s-0.5 2.5-1.3 3.3l-3 3.1-3-3.1c-0.8-0.8-1.3-2-1.3-3.3 0-1.2 0.4-2.2 1.3-3.1 0.8-0.8 1.9-1.3 3-1.3z);
+    background-size:32dip 36dip;
+    fill:color(lighten4);
+    stroke:none;
+    //color: #fff;
+    transform: translate(-8dip, -100%) scale(0);
+    transition: transform 160ms;
+    transform-origin: 50% 100%;
+    filter: drop-shadow(1dip,1dip,1dip,#999);
+  }
+
+  :root:focus > knob::marker,
+  :root:hover > knob::marker {
+    transform: translate(-8dip, -100%) scale(1);
+  }
+
+}
+
+.material slider { style-set: m-slider; }
+
+hbox, .hbox { 
+  display:block; 
+  flow:horizontal;
+  border-spacing:1em;
+  width:*;
+}
+

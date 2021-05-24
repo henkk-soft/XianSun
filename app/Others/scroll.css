@@ -1,0 +1,51 @@
+
+@set my-v-scrollbar
+{
+  .prev { display:none; }
+  .next { display:none; }
+  
+  .base,
+  .next-page, 
+  .prev-page { background:white;  }
+  
+  .slider    { background: #88888888;border-radius: 5px; }
+ 
+  .base:disabled { background: #aaa; }
+    
+  .slider:hover  { background: #0092ff88;  }
+  
+  .slider:active { background: #0092ff; }
+ 
+  .base { width: 8dip;  } /* explicit declaration of its width */
+  .corner { background: transparent; }
+}
+
+#horizontal-container 
+{ 
+	size:*;
+	flow:horizontal; 
+}
+
+.myscrollbar { 
+    vertical-scrollbar: my-v-scrollbar;
+	color: black; 
+    overflow-x: hidden;
+    
+}
+
+#window-scroll-always
+{ 
+	overflow-y: scroll;
+}
+#window-scroll-auto
+{ 
+	overflow-y: auto; 
+}
+#window-scroll-hidden
+{ 
+	overflow-y: hidden; 
+}
+#window-scroll-visible
+{ 
+	overflow-y: visible; 
+}

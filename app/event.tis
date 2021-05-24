@@ -1,0 +1,74 @@
+// const frameLeft = $(frame#left);
+property Element.shown(v) 
+{
+  get return this.style#display != "none";
+  set this.attributes["hidden"] = v ? undefined : true;
+}
+function loadshow(){
+    $(div#loading).shown=true;
+}
+function loadhide(){
+    $(div#loading).shown=false;
+}
+const frameRight = $(frame#right);
+var rightPage=["./Pages/add.html","./Pages/task.html","./Pages/set.html"];
+var nowPage=0;
+frameRight.load(rightPage[nowPage]);
+// frameLeft.load("button.html");
+$(div#add).style.set
+            { 
+                background: "url(../img/choose.png) no-repeat",
+                color: #000000
+            }; 
+self.on("click", "div#add", function() {
+    if(nowPage!=0)
+        {
+
+            $(div#add).style.set
+            { 
+                background: "url(../img/choose.png) no-repeat",
+                color: #000000
+            }; 
+            $(div#task).style.clear();
+            $(div#set).style.clear();
+            nowPage=0;
+            frameRight.load(rightPage[nowPage]);
+        }
+      });
+self.on("click", "div#task", function() {
+    if(nowPage!=1)
+        {
+            $(div#task).style.set
+            { 
+                background: "url(../img/choose.png) no-repeat",
+                color: #000000
+            }; 
+            $(div#add).style.clear();
+            $(div#set).style.clear();
+            nowPage=1;
+            frameRight.load(rightPage[nowPage]);
+        }
+      });
+self.on("click", "div#set", function() {
+    if(nowPage!=2)
+        {
+            $(div#set).style.set
+            { 
+                background: "url(../img/choose.png) no-repeat",
+                color: #000000
+            }; 
+            $(div#add).style.clear();
+            $(div#task).style.clear();
+            nowPage=2;
+            frameRight.load(rightPage[nowPage]);
+            
+        }
+      });
+      loadhide();
+      
+function View.getTaskJson(param){
+  return view.GetTaskJson(param);
+}
+function View.updateTask(param,id){
+  return view.UpdateTask(param,id);
+}
