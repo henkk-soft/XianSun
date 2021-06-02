@@ -5,7 +5,9 @@ import (
 	"crypto/tls"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"net/smtp"
 	"strings"
 	"time"
 
@@ -38,7 +40,7 @@ func testRun(injson string) (string, string) {
 func chromedpRun(url, cookie string) string {
 	ctx, cancel := chromedp.NewContext(context.Background())
 	defer cancel()
-	ctx, cancel = context.WithTimeout(ctx, time.Duration(config["runtime"].(int64))*time.Second)
+	ctx, cancel = context.WithTimeout(ctx, time.Duration(_config["runtime"].(int64))*time.Second)
 	defer cancel()
 	var outerBefore string
 	err := chromedp.Run(ctx,
@@ -60,7 +62,7 @@ func simpleRun(url, cookie string) string {
 	}
 	client := &http.Client{
 		Transport: tr,
-		Timeout:   time.Duration(config["runtime"].(int64)) * time.Second,
+		Timeout:   time.Duration(_config["runtime"].(int64)) * time.Second,
 	}
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Add("Cookie", cookie)
@@ -103,4 +105,44 @@ func Run(ishight, address, cookie, csschoose, xpathchoose string) (string, strin
 			return xPath(strings.NewReader(body), xpathchoose), cssPath(strings.NewReader(body), csstitle)
 		}
 	}
+}
+func getRun(url string) string {
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{
+		Transport: tr,
+		Timeout:   time.Duration(_config["runtime"].(int64)) * time.Second,
+	}
+	req, _ := http.NewRequest("GET", url, nil)
+	resp, _ := client.Do(req)
+	body, _ := ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+	return string(body)
+}
+func postRun(url, post, contentType string) string {
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{
+		Transport: tr,
+		Timeout:   time.Duration(_config["runtime"].(int64)) * time.Second,
+	}
+	resp, _ := client.Post(url, contentType, strings.NewReader(post))
+	body, _ := ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+	return string(body)
+}
+func SendToMail(subject, body string) error {
+	hp := strings.Split(_config["emailhost"].(string), ":")
+	auth := smtp.PlainAuth("", _config["email"].(string), _config["emailpass"].(string), hp[0])
+	content_type := "Content-Type: text/plain" + "; charset=UTF-8"
+
+	msg := []byte("To: " + _config["emailto"].(string) + "\r\nFrom: " + _config["email"].(string) + ">\r\nSubject: " + subject + "\r\n" + content_type + "\r\n\r\n" + body)
+	send_to := strings.Split(_config["emailto"].(string), ";")
+	err := smtp.SendMail(_config["emailhost"].(string), auth, _config["email"].(string), send_to, msg)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	return err
 }

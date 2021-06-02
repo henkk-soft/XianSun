@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/go-toast/toast"
+	"github.com/tidwall/gjson"
 	"golang.org/x/sys/windows/registry"
 )
 
@@ -31,7 +32,7 @@ func InitPanicFile() error {
 	}
 	return nil
 }
-func StringMax(str string, maxcount int) string {
+func stringMax(str string, maxcount int) string {
 	if len(str) > maxcount {
 		str = str[0:maxcount] + "..."
 	}
@@ -148,11 +149,16 @@ func comparehis(old, new string, task map[string]interface{}) (bool, string) {
 	}
 	return false, "not change"
 }
+func msgreplace(old, new string, task map[string]interface{}) string {
+	str := strings.ReplaceAll(_config["msgformat"].(string), "\\n", "\n")
+	str = strings.ReplaceAll(str, "{{标题}}", task["title"].(string))
+	str = strings.ReplaceAll(str, "{{全文}}", new)
+	str = strings.ReplaceAll(str, "{{上文}}", old)
+	return str
+}
 func msgwin(old, new string, task map[string]interface{}) {
-	str := strings.ReplaceAll(config["msgformat"].(string), "\\n", "\n")
-	str = strings.ReplaceAll(str, "#标@题#", task["title"].(string))
-	str = strings.ReplaceAll(str, "#全@文#", new)
-	str = strings.ReplaceAll(str, "#上@文#", old)
+	str := msgreplace(old, new, task)
+	a, _ := toast.Audio(_config["msgwav"].(string))
 	notification := toast.Notification{
 		AppID:   "Microsoft.Windows.Shell.RunDialog",
 		Title:   task["title"].(string),
@@ -160,14 +166,75 @@ func msgwin(old, new string, task map[string]interface{}) {
 		Actions: []toast.Action{
 			{"protocol", "点击进入网站", task["address"].(string)},
 		},
-		Audio: toast.Mail,
+		Audio: a,
 	}
 	err := notification.Push()
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 	}
 
 }
 func msgemail(old, new string, task map[string]interface{}) {
-	//TODO
+	if _config["email"].(string) == "" || _config["emailhost"].(string) == "" || _config["emailto"].(string) == "" {
+		log.Println("请完善邮箱设置")
+		return
+	}
+	SendToMail(task["title"].(string), msgreplace(old, new, task)+"\n"+task["address"].(string))
+}
+func msgwexin(old, new string, task map[string]interface{}) {
+	if _config["wxid"].(string) == "" || _config["wxsecret"].(string) == "" || _config["wxtid"].(string) == "" || _config["wxto"].(string) == "" {
+		log.Println("请完善微信设置")
+		return
+	}
+	str := strings.ReplaceAll(_config["msgformat"].(string), "{{标题}}", task["title"].(string))
+	str = strings.ReplaceAll(str, "{{全文}}", new)
+	str = strings.ReplaceAll(str, "{{上文}}", old)
+	wxSend(stringMax(str, 200), task["address"].(string))
+}
+
+var wxtoken string = ""
+
+func wxGetToken() string {
+	if wxtoken == "" {
+		req := getRun("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + _config["wxid"].(string) + "&secret=" + _config["wxsecret"].(string))
+		if gjson.Get(req, "errcode").String() != "" {
+			return gjson.Get(req, "errmsg").String()
+		} else {
+			wxtoken = gjson.Get(req, "access_token").String()
+		}
+	} else {
+		req := getRun("https://api.weixin.qq.com/cgi-bin/template/get_all_private_template?access_token=" + wxtoken)
+		if gjson.Get(req, "errcode").String() != "" {
+			req = getRun("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + _config["wxid"].(string) + "&secret=" + _config["wxsecret"].(string))
+			if gjson.Get(req, "errcode").String() != "" {
+				return gjson.Get(req, "errmsg").String()
+			}
+		}
+	}
+	return ok
+}
+func wxSend(msg, url string) string {
+	if gettoken := wxGetToken(); gettoken != ok {
+		return gettoken
+	}
+	users := strings.Split(_config["wxto"].(string), ";")
+	for _, user := range users {
+		post := `{
+			"touser":"` + user + `",
+			"template_id":"` + _config["wxtid"].(string) + `",
+			"url":"` + url + `",
+			"data":{
+					"content": {
+						"value":"` + msg + `",
+						"color":"#0092ff"
+					}
+			}
+		}`
+		req := postRun("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token="+wxtoken, post, "application/json")
+		if gjson.Get(req, "errcode").String() != "" {
+			log.Println(gjson.Get(req, "errmsg").String())
+		}
+	}
+
+	return ok
 }

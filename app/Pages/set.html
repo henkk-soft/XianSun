@@ -13,10 +13,9 @@
           Clear();
         }
         function fillSelect(){
-          var list=view.GetSound();
+          var list=["default","im","mail","reminder","sms","loopingalarm","loopingalarm2","loopingalarm3","loopingalarm4","loopingalarm5","loopingalarm6","loopingalarm7","loopingalarm8","loopingalarm9","loopingalarm10","loopingcall","loopingcall2","loopingcall3","loopingcall4","loopingcall5","loopingcall6","loopingcall7","loopingcall8","loopingcall9","loopingcall10","silent"];
           var select = $(select(msgwav));
           select.options.clear();
-          select.options.$append(<option value=不使用>不使用</option>);
           for(var (i,wav) in list)
            select.options.$append(<option value={wav}>{wav}</option>);
      }
@@ -34,8 +33,9 @@
           runstep:1,
           email:"",
           emailpass:"",
+          emailserver:"",
           emailto:"",
-          msgwav:"",
+          msgwav:"default",
           msgformat:"#标@题# 已更新\\n 此次内容：#全@文#\\n 上次内容：#上@文#",
           softopen:0,
           softmin:0,
@@ -47,12 +47,11 @@
   </head>
   <body>
     <br>
-    <main.material style="margin-left: 120px;margin-right: 120px;">
+    <main.material style="margin-left: 110px;margin-right: 110px;">
         <section>
           <H1 align="center" style="color:#0092ff ;margin-top: -2px;">设 置</H1>
-          <br>
           <form>
-            <div style="width: 460px;">
+            <div>
               <h3>任务运行设置</h3>
               <a>超时时间(s):</a>&emsp;<input(runtime) type="number" min="1" max="20" step="1" value="5">&emsp;
               <a>最大并行任务数</a>&emsp;<input(runnum) type="number" min="1" max="20" step="1" value="5">&emsp;
@@ -61,16 +60,24 @@
             <br>
             <div>
               <h3>邮箱设置</h3>
-              <editbox(email) caption="邮箱地址..."  style="width: 150px;" value=" "/>
-              <editbox(emailpass) caption="邮箱密码..."  style="width: 150px; position:relative;margin-top: -27px;left: 160px;" value=" "/>
-              <editbox(emailto) caption="发送地址..."  style="width: 150px; position:relative;margin-top: -27px;left: 320px;" value=" "/>
+              <editbox(emailhost) caption="smtp服务器地址..."  style="width: 130px;" value=" "/>
+              <editbox(email) caption="邮箱地址..."  style="width: 130px; position:relative;margin-top: -27px;left: 140px;" value=" "/>
+              <editbox(emailpass) caption="邮箱凭证..."  style="width: 130px; position:relative;margin-top: -27px;left: 280px;" value=" "/>
+              <editbox(emailto) caption="发送地址..."  style="width: 130px; position:relative;margin-top: -27px;left: 420px;" value=" "/>
+            </div>
+            <div>
+              <h3>微信设置</h3>
+              <editbox(wxid) caption="appID..."  style="width: 130px;" value=" "/>
+              <editbox(wxsecret) caption="appsecret..."  style="width: 130px; position:relative;margin-top: -27px;left: 140px;" value=" "/>
+              <editbox(wxtid) caption="模板ID..."  style="width: 130px; position:relative;margin-top: -27px;left: 280px;" value=" "/>
+              <editbox(wxto) caption="发送微信号..."  style="width: 130px; position:relative;margin-top: -27px;left: 420px;" value=" "/>
             </div>
             <br>
             <div>
               <h3>通知设置</h3>
               <a>通知音效</a>
               <select(msgwav) style="width: 100px;">
-                <OPTION VALUE="不使用" >不使用</OPTION>
+                
             </select>
               <editbox(msgformat) caption="通知格式..."  style="width: 350px;position:relative;margin-top: -27px;left: 170px;" value="e"/>
             </div>

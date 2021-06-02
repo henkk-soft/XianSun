@@ -13,9 +13,11 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-const ok = "OK!"
-const dbpath = "./data/task.db"
-const tasktablecreate = `CREATE TABLE "_table" (
+const (
+	version         = "v0.1.1.1" //版本号依次表示重大改变、任务内容改变、任务列表改变、配置改变
+	ok              = "OK!"
+	dbpath          = "./data/task.db"
+	tasktablecreate = `CREATE TABLE "_table" (
 	"title" MEDIUMTEXT NULL,
 	"info" MEDIUMTEXT NOT NULL,
 	"date" MEDIUMTEXT NOT NULL,
@@ -27,11 +29,60 @@ BEGIN
 delete from "_table" where (select count(date) from "_table" )> %G and date in (select date from "_table" order by date desc limit (select count(date) from "_table") offset %G);
 END;
 	`
-const historyinsert = `INSERT INTO "%d"(title,info,date,status) values(?,?,?,?)`
-const taskupdate = ""
-const taskdelete = ""
-const mintime = "2006-01-02 15:04:05"
-const maxtime = "2406-01-02 15:04:05"
+	config_table = `CREATE TABLE "confinfo" (
+		"id" integer PRIMARY KEY,
+		"runtime" INTEGER NOT NULL,
+		"runnum" INTEGER NOT NULL,
+		"runstep" INTEGER NOT NULL,
+		"email" MEDIUMTEXT NULL,
+		"emailpass" MEDIUMTEXT NULL,
+		"emailhost" MEDIUMTEXT NULL,
+		"emailto" MEDIUMTEXT NULL,
+		"wxid" MEDIUMTEXT NULL,
+		"wxsecret" MEDIUMTEXT NULL,
+		"wxtid" MEDIUMTEXT NULL,
+		"wxto" MEDIUMTEXT NULL,
+		"msgwav" MEDIUMTEXT NULL,
+		"msgformat" MEDIUMTEXT NOT NULL,
+		"softopen" INTEGER NOT NULL,
+		"softmin" INTEGER NOT NULL,
+		"softclose" INTEGER NOT NULL,
+		"version" MEDIUMTEXT NOT NULL
+	   );`
+	task_table = `CREATE TABLE "task" (
+		"id" integer PRIMARY KEY autoincrement,
+		"title" MEDIUMTEXT NULL,
+		"address" MEDIUMTEXT NOT NULL,
+		"ishight" INTEGER NOT NULL,
+		"cookie" MEDIUMTEXT NULL,
+		"csschoose" MEDIUMTEXT NULL,
+		"xpathchoose" MEDIUMTEXT NULL,
+		"type" MEDIUMTEXT NOT NULL,
+		"con" MEDIUMTEXT NOT NULL,
+		"istext" MEDIUMTEXT NOT NULL,
+		"timestart" MEDIUMTEXT NULL,
+		"timeend" MEDIUMTEXT NULL,
+		"timestep" MEDIUMTEXT NOT NULL,
+		"ismessgewx" INTEGER NOT NULL,
+		"ismessgewin" INTEGER NOT NULL,
+		"ismessgeemail" INTEGER NOT NULL,
+		"history" MEDIUMTEXT NOT NULL,
+		"historynum" INTEGER NOT NULL,
+		"addtime" MEDIUMTEXT NOT NULL,
+		"lastruntime" MEDIUMTEXT NOT NULL,
+		"lastchangetime" MEDIUMTEXT NOT NULL,
+		"lastmsgtime" MEDIUMTEXT NOT NULL,
+		"nextruntime" MEDIUMTEXT NOT NULL,
+		"status" MEDIUMTEXT NOT NULL
+	  );
+	  `
+	config_init   = `INSERT INTO confinfo values(1,5,5,1,"","","","","","","","","default","{{标题}} 已更新\n 此次内容：{{全文}}\n 上次内容：{{上文}}",0,0,0,"` + version + `");`
+	historyinsert = `INSERT INTO "%d"(title,info,date,status) values(?,?,?,?)`
+	taskupdate    = ""
+	taskdelete    = ""
+	mintime       = "2006-01-02 15:04:05"
+	maxtime       = "2406-01-02 15:04:05"
+)
 
 var db *sql.DB
 
@@ -39,54 +90,68 @@ func dbinit() {
 	if !PathExists(dbpath) {
 		os.Create(dbpath)
 		db, _ = sql.Open("sqlite3", dbpath)
-		sql_table := `CREATE TABLE "task" (
-			"id" integer PRIMARY KEY autoincrement,
-			"title" MEDIUMTEXT NULL,
-			"address" MEDIUMTEXT NOT NULL,
-			"ishight" INTEGER NOT NULL,
-			"cookie" MEDIUMTEXT NULL,
-			"csschoose" MEDIUMTEXT NULL,
-			"xpathchoose" MEDIUMTEXT NULL,
-			"type" MEDIUMTEXT NOT NULL,
-			"con" MEDIUMTEXT NOT NULL,
-			"istext" MEDIUMTEXT NOT NULL,
-			"timestart" MEDIUMTEXT NULL,
-			"timeend" MEDIUMTEXT NULL,
-			"timestep" MEDIUMTEXT NOT NULL,
-			"ismessgesoft" INTEGER NOT NULL,
-			"ismessgewin" INTEGER NOT NULL,
-			"ismessgeemail" INTEGER NOT NULL,
-			"history" MEDIUMTEXT NOT NULL,
-			"historynum" INTEGER NOT NULL,
-			"addtime" MEDIUMTEXT NOT NULL,
-			"lastruntime" MEDIUMTEXT NOT NULL,
-			"lastchangetime" MEDIUMTEXT NOT NULL,
-			"lastmsgtime" MEDIUMTEXT NOT NULL,
-			"nextruntime" MEDIUMTEXT NOT NULL,
-			"status" MEDIUMTEXT NOT NULL
-		  );
-		  CREATE TABLE "confinfo" (
-			"id" integer PRIMARY KEY,
-			"runtime" INTEGER NOT NULL,
-			"runnum" INTEGER NOT NULL,
-			"runstep" INTEGER NOT NULL,
-			"email" MEDIUMTEXT NULL,
-			"emailpass" MEDIUMTEXT NULL,
-			"emailto" MEDIUMTEXT NULL,
-			"msgwav" MEDIUMTEXT NULL,
-			"msgformat" MEDIUMTEXT NOT NULL,
-			"softopen" INTEGER NOT NULL,
-			"softmin" INTEGER NOT NULL,
-			"softclose" INTEGER NOT NULL
-		   );
-		   INSERT INTO confinfo values(1,5,5,1,"","","","不使用","#标@题# 已更新\n 此次内容：#全@文#\n 上次内容：#上@文#",0,0,0);
-		  `
-		db.Exec(sql_table)
+		db.Exec(config_table)
+		db.Exec(config_init)
+		db.Exec(task_table)
+		_config = SelectToMaps("SELECT * FROM confinfo where id=1")[0]
 	} else {
 		db, _ = sql.Open("sqlite3", dbpath)
-	}
+		_config = SelectToMaps("SELECT * FROM confinfo where id=1")[0]
+		if _config["version"].(string) != version {
+			oldversion := strings.Split(_config["version"].(string), ".")
+			newversion := strings.Split(version, ".")
+			if oldversion[3] != newversion[3] {
+				db.Exec("drop table 'confinfo'")
+				db.Exec(config_table)
+				temp, _ := db.Query("select * from confinfo")
+				newconfig, _ := temp.Columns()
+				for t, _ := range _config {
 
-	config = SelectToMaps("SELECT * FROM confinfo where id=1")[0]
+					flag := false
+					for _, new := range newconfig {
+						if new == t {
+							flag = true
+							break
+						}
+					}
+					if !flag {
+						delete(_config, t)
+					}
+				}
+				temp.Close()
+				MapToInsert("confinfo", _config)
+				_config = SelectToMaps("SELECT * FROM confinfo where id=1")[0]
+			}
+			if oldversion[2] != newversion[2] {
+				tasks := SelectToMaps("SELECT * FROM task")
+				db.Exec("drop table 'task'")
+				db.Exec(task_table)
+				temp, _ := db.Query("select * from task")
+				newtask, _ := temp.Columns()
+				for _, t := range tasks {
+					for k, _ := range t {
+						flag := false
+						for _, new := range newtask {
+							if new == k {
+								flag = true
+								break
+							}
+						}
+						if !flag {
+							delete(t, k)
+						}
+
+					}
+					MapToInsert("task", t)
+				}
+				temp.Close()
+			}
+			if oldversion[1] != newversion[1] {
+				//TODO
+			}
+		}
+	}
+	_config = SelectToMaps("SELECT * FROM confinfo where id=1")[0]
 }
 func taskUpdate(table, injson, where string) string {
 	timestart := gjson.Get(injson, "timeline.0").Time()

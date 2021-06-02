@@ -19,7 +19,7 @@ import (
 
 var _w *window.Window
 var _setInfo map[string](string)
-var config map[string]interface{}
+var _config map[string]interface{}
 
 func main() {
 	if os.Getenv("VSCODE_AMD_ENTRYPOINT") == "" {
@@ -57,7 +57,7 @@ func main() {
 		log.Panic(err)
 	}
 	setEventHandler()
-	if config["softmin"].(int64) == 0 {
+	if _config["softmin"].(int64) == 0 {
 		_w.Show()
 	} else {
 		_w.Call("ChangeWindow")
@@ -79,18 +79,6 @@ func setEventHandler() {
 	_w.DefineFunction("ConfigUp", func(args ...*sciter.Value) *sciter.Value {
 		go configUpdate_go(args[0].String())
 		return sciter.NewValue("")
-	})
-	_w.DefineFunction("GetSound", func(args ...*sciter.Value) *sciter.Value {
-		a := sciter.NewValue()
-		files, _ := ioutil.ReadDir("./sound")
-		for _, file := range files {
-			if file.IsDir() {
-				continue
-			} else {
-				a.Append((file.Name()))
-			}
-		}
-		return a
 	})
 	_w.DefineFunction("GetTask", func(args ...*sciter.Value) *sciter.Value {
 		_sql := "select * from task order by lastchangetime DESC"
@@ -136,7 +124,7 @@ func setEventHandler() {
 }
 func testRun_go(injson string) {
 	mes, _ := testRun(injson)
-	mes = StringMax(mes, 500)
+	mes = stringMax(mes, 500)
 	_w.Call("MessgeBox", sciter.NewValue(mes))
 	_w.Call("loadhide")
 }
@@ -149,7 +137,7 @@ var nowTask int64 = 0
 
 func taskRun_go() {
 	for {
-		if nowTask < (config["runstep"].(int64)) {
+		if nowTask < (_config["runstep"].(int64)) {
 			_map := SelectToMaps("SELECT * FROM task  where nextruntime <=strftime('%Y-%m-%d %H:%M:%S','now','localtime') and timeend>=strftime('%Y-%m-%d %H:%M:%S','now','localtime') ORDER BY nextruntime")
 			for _, task := range _map {
 				temp := make(map[string]interface{})
@@ -161,7 +149,7 @@ func taskRun_go() {
 				nowTask++
 			}
 		}
-		time.Sleep(time.Second * time.Duration(config["runstep"].(int64)))
+		time.Sleep(time.Second * time.Duration(_config["runstep"].(int64)))
 	}
 }
 func runtask(task map[string]interface{}) {
@@ -186,8 +174,8 @@ func runtask(task map[string]interface{}) {
 		if task["ismessgeemail"].(int64) == 1 {
 			msgemail(lastinfo["info"].(string), his["info"].(string), task)
 		}
-		if task["ismessgesoft"].(int64) == 1 {
-			//TODO
+		if task["ismessgewx"].(int64) == 1 {
+			msgwexin(lastinfo["info"].(string), his["info"].(string), task)
 		}
 	}
 	temp["status"] = "sleep"
@@ -195,21 +183,21 @@ func runtask(task map[string]interface{}) {
 	nowTask--
 }
 func configUpdate_go(injson string) {
-	var lastconfig = config
+	var lastconfig = _config
 	msg := JsonToUpdate("confinfo", injson, "id=1")
-	config = SelectToMaps("SELECT * FROM confinfo where id=1")[0]
+	_config = SelectToMaps("SELECT * FROM confinfo where id=1")[0]
 
-	if lastconfig["softopen"] != config["softopen"] {
+	if lastconfig["softopen"] != _config["softopen"] {
 
-		if config["softopen"].(int64) == 0 {
+		if _config["softopen"].(int64) == 0 {
 			deletestartup()
 		} else {
 			openstartup()
 		}
 
 	}
-	if lastconfig["softclose"] != config["softclose"] {
-		if config["softclose"].(int64) == 0 {
+	if lastconfig["softclose"] != _config["softclose"] {
+		if _config["softclose"].(int64) == 0 {
 			winf, _ := ioutil.ReadFile("./app/window.tis")
 			winf = []byte(strings.Replace(string(winf), "ChangeWindow();//close", "CloseWindow();//close", 1))
 			ioutil.WriteFile("./app/window.tis", winf, 0666)
