@@ -1,4 +1,4 @@
-![img](https://www.hualigs.cn/image/60b77cd61e9d9.jpg)
+![img](https://imgur.com/eekqr7P.png)
 
 ---
 ### 项目说明
