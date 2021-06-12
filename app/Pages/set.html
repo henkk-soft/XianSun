@@ -3,6 +3,7 @@
       <style>
         @import url(../Others/Material/material.css);
         @import url(../style.css);
+        @import url(../Others/scroll.css);
       </style>
       <script type="text/tiscript">
           include "../Others/Material/material.tis";
@@ -36,7 +37,7 @@
           emailserver:"",
           emailto:"",
           msgwav:"default",
-          msgformat:"#标@题# 已更新\\n 此次内容：#全@文#\\n 上次内容：#上@文#",
+          msgformat:"{{标题}} 已更新\\n 此次内容：{{全文}}\\n 上次内容：{{上文}}",
           softopen:0,
           softmin:0,
           softclose:0
@@ -53,9 +54,9 @@
           <form>
             <div>
               <h3>任务运行设置</h3>
-              <a>超时时间(s):</a>&emsp;<input(runtime) type="number" min="1" max="20" step="1" value="5">&emsp;
-              <a>最大并行任务数</a>&emsp;<input(runnum) type="number" min="1" max="20" step="1" value="5">&emsp;
-              <a>任务最小间隔(s)</a>&emsp;<input(runstep) type="number" min="1" max="10" step="1" value="1">&emsp;
+              <a>超时时间(s):</a>&emsp;<input|number(runtime) min="1" max="20" step="1" value="5" style="width: 70px;">&emsp;
+              <a>最大并行任务数</a>&emsp;<input|number(runnum) min="1" max="20" step="1" value="5" style="width: 70px;">&emsp;
+              <a>任务最小间隔(s)</a>&emsp;<input|number(runstep)  min="1" max="10" step="1" value="1" style="width: 70px;">&emsp;
             </div>
             <br>
             <div>
@@ -76,10 +77,10 @@
             <div>
               <h3>通知设置</h3>
               <a>通知音效</a>
-              <select(msgwav) style="width: 100px;">
+              <select(msgwav) style="width: 120px;">
                 
             </select>
-              <editbox(msgformat) caption="通知格式..."  style="width: 350px;position:relative;margin-top: -27px;left: 170px;" value="e"/>
+              <editbox(msgformat) caption="通知格式..."  style="width: 350px;position:relative;margin-top: -27px;left: 190px;" value="e"/>
             </div>
             <br>
             <div>

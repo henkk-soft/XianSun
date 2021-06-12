@@ -11,7 +11,7 @@
     line-height:1.8em;
     
   }
-
+  
   :root > caption {
     flow:horizontal;
     behavior:clickable;
@@ -57,7 +57,7 @@
     border-top:1dip solid #ccc;
     background-color:#ffffff;
   }
-
+ 
   :root:invalid[novalue] > caption {
     color:transparent;
   }

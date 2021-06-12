@@ -3,19 +3,18 @@
 .material button { style-set: m-button; }
 .material button.flat { style-set: m-button-flat; }
 
+
 @set m-button < std-button-base {
   :root { 
-    background: var(ascent1,#000); 
-    box-shadow: #aaa 1dip 1dip 1dip;
-    border-radius: 2dip;
-    aspect: Material.Ripple url(material.tis);
-    -ripple-from-color: var(lighten3,#000);
-    -ripple-to-color: var(lighten5,#000);
+    background: #fff; 
+    border-radius: 4dip;
+    border:#909090 solid thin;
     cursor:pointer;
     padding:0.5em 1em;
   }
-  :root:hover { background: var(lighten3,#000); }
-  :root:active { background: var(lighten5,#000); }
+  :root:hover { background: var(lighten4,#000); }
+  :root:active { background: var(lighten3,#000); }
+  
 
   :root:tab-focus { outline:1dip dashed color(normal) -4dip; }
 }
@@ -34,6 +33,7 @@
 
   :root:tab-focus { outline:1dip dashed color(normal) 0dip; }
 }
+
 
 .material editbox { style-set: m-editbox; }
 
@@ -100,7 +100,7 @@
 
   :root::marker {
     size:12dip;
-    border:2dip solid #bbb;
+    border:1.2dip solid #bbb;
     border-radius: 3dip;
     margin: * * * 0;
     background: url(path:M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z) 50% 50% no-repeat;
@@ -137,7 +137,7 @@
 
   :root::marker {
     size:13dip;
-    border:2dip solid #bbb;
+    border:1.2dip solid #bbb;
     border-radius: 8dip;
     margin: * * * 0;
     background: url(stock:disk) 50% 50% no-repeat;
@@ -251,3 +251,357 @@ hbox, .hbox {
   width:*;
 }
 
+@set std-time-edit < std-time-edit-base
+{
+  :root
+  {
+    font:system;
+    color:@WINDOWTEXT;
+    text-selection: @WINDOWTEXT @THREEDFACE;
+    padding:0;
+    border-radius: @INPUT-RADIUS; 
+  }
+  
+  :root > caption {
+    width:*;
+    line-height:1.4em;
+    padding:0.25em; 
+    background: @WINDOW;
+    border:1dip solid @THREEDBORDER;
+    border-radius: @INPUT-RADIUS 0 0 @INPUT-RADIUS;  
+  }
+  
+  :root:disabled > caption { background:@THREEDFACE; color:@GRAYTEXT; }  
+
+  :root > caption > span:current
+  {
+    background-color: transparent;
+    color: @WINDOWTEXT;
+  }
+  :root:focus > caption > span:current
+  {
+    background-color: color(lighten3); 
+    color: @HIGHLIGHTTEXT;
+  }    
+
+  :root:invalid
+  {
+    color:red;
+  }
+
+  :root > button
+  {
+    height:0.5*;
+    width:1.2em;
+    background:@THREEDFACE;
+    border:1dip solid @THREEDBORDER;
+    foreground-position:50% 50%;
+    foreground-size:5dip;
+    foreground-repeat:no-repeat;
+  }
+
+  :root > button:hover
+  {
+    transition:none;
+    background:@THREEDHOVER;
+  }
+  :root > button:active
+  {
+    background:@THREEDHIGHLIGHT;
+  }
+  :root > button:disabled
+  {
+    background:@THREEDDISABLED; 
+  }
+
+  :root > button.minus
+  {
+    padding:0;
+    border-radius: 0 0 @INPUT-RADIUS 0;
+    border-top-style: none;
+    border-left-style: none;
+    foreground-image: url(stock:arrow-down); 
+  }
+ 
+  :root > button.plus
+  {
+    padding:0;
+    border-radius: 0 @INPUT-RADIUS 0 0;
+    border-bottom-style: none;
+    border-left-style: none;
+    foreground-image: url(stock:arrow-up);     
+  }
+}
+
+@set std-number-edit < std-number-edit-base
+{
+  :root {
+  
+    background:transparent;
+    color:black;
+    padding-top:0.5em;
+    border-bottom:1dip solid #bbb;
+    width:8em;
+    background: url(stock:block) center bottom no-repeat;
+    background-size: 0% 2dip; 
+    transition: background-size quad-out 160ms; 
+    fill: color(normal);
+     border-spacing:1dip;
+    line-height:1.6em;
+  }
+  :root::marker { 
+    margin-top:0.5em;
+    line-height:1.6em; 
+    width:*;
+    margin-right: 3.2em; 
+    transform-origin: 0% 0%; 
+    color:#777; 
+    content: attr(placeholder); 
+    transition: transform quad-out 160ms; 
+    z-index:-1;
+  }  
+
+  :root:owns-focus::marker, 
+  :root:not(:empty)::marker
+  { 
+    transform: translate(0,-80%) scale(0.7);  
+  }
+
+  :root:owns-focus
+  {
+    background-size: 100% 2dip; 
+   text-selection: #000 color(lighten4);
+
+  }
+
+  //:root:owns-popup,
+  //:root:focus            { text-selection: color(selection-text) color(selection); }
+  //:root:disabled         { background:color(widget-disabled); color:color(widget-disabled-text); }  
+  //:root:tab-focus        { outline:@STD-OUTLINE-FOCUS; }  
+
+  :root > caption 
+  { 
+    width:*;
+    line-height:1.6em;
+    height:1.6em;
+    //padding:0.2em 0 0.2em 0.4em;
+  }
+
+  //:root:disabled > caption { color:color(widget-disabled-text); }  
+  //:root:not([step]) > caption { border-radius: length(border-radius); }
+
+  :root > button
+  {
+    background: #fff; 
+    border-radius: 2dip;
+    border:#909090 solid none;
+    height:*;
+    min-height:5dip;
+    width:1.6em;
+    fill: black;
+    box-shadow:none;
+    foreground-position:50% 50%;
+    foreground-size:6dip;
+    foreground-repeat:no-repeat;
+    cursor:pointer;
+  }
+:root > button:hover
+  {
+    transition:none;
+    background:var(lighten4,#000);
+  }
+  :root > button:active
+  {
+    background:var(lighten3,#000);
+  }
+  :root:disabled > button
+  {
+    background: color(widget-disabled);
+    color: color(widget-disabled-text);
+    fill: color(widget-disabled-text);
+  } 
+  
+  :root > button.minus
+  {
+    padding:0;
+    foreground-image: url(stock:chevron-down); 
+  }
+ 
+  :root > button.plus
+  {
+    padding:0;
+    foreground-image: url(stock:chevron-up); 
+  }
+
+}
+@set std-select-dropdown < std-select-dropdown-base
+  {
+ 
+    :root
+    { 
+      background:transparent;
+    color:black;
+    padding-top:0.5em;
+    border-bottom:1dip solid #bbb;
+    width:8em;
+    background: url(stock:block) center bottom no-repeat;
+    background-size: 0% 2dip; 
+    transition: background-size quad-out 160ms; 
+    fill: black;
+     border-spacing:1dip;
+
+     foreground: url(stock:block) center bottom no-repeat;
+     foreground-size: 0% 2dip; 
+     foreground-clip: border-box;
+     transition: foreground-size quad-out 160ms; 
+    }
+        
+    :root:hover                   {  fill:var(lighten3,#000);cursor:pointer;}
+
+    :root:owns-focus
+    {
+      fill: color(normal);
+      foreground-size: 100% 2dip; 
+    }
+    /* caption portion of combobox */
+    :root > caption
+    { 
+      padding:0.25em 0.5em 0.25em 0.5em;
+	    min-width : 2em;
+      color:@WINDOWTEXT; 
+    }
+    
+    /* popup select element */
+    :root > popup.list
+    { 
+      margin:0;
+      padding:0; 
+      border:1dip solid @THREEDBORDER;
+      background: @WINDOW;
+    }
+    
+    option { line-height:1.4em; padding: 1dip 0.5em; }
+    /*:root:not([multiple]) > popup > option { padding: 0 4dip; }*/
+    option:current
+    {
+		  background-color:@HIGHLIGHT; color:@HIGHLIGHTTEXT;
+    }
+    
+    optgroup > caption 
+    { 
+      padding:1dip 3dip; 
+      font-weight:bold; 
+      color:@GRAYTEXT;
+    }
+    optgroup > option 
+    { 
+      padding-left:20dip; 
+    }
+    optgroup > option:rtl
+    { 
+      padding-right:20dip; 
+      padding-left:1dip; 
+    }
+    
+    
+    
+    /* dropdown button of the combobox */
+    :root > button
+    {
+      display :block; 
+      width	  :1.2em;
+      height	:*;
+      padding	:0; 
+      background:transparent; 
+      border:none;
+      foreground-image:url(stock:arrow-down); /* that arrow */
+    }
+    
+    :root[editable] { background:none; border:none; }
+  
+    :root[editable]:owns-popup,
+    :root[editable]:focus            {  text-selection: @HIGHLIGHTTEXT @HIGHLIGHT; }
+    :root[editable]:disabled         {  background:@THREEDFACE;  color:@GRAYTEXT; }
+    
+    :root[editable] > caption {
+      padding:0.25em 0.5em 0.25em 0.5em;
+      text-selection: @WINDOWTEXT @THREEDFACE;
+      background: @WINDOW;
+      border:1dip solid @THREEDBORDER;
+      border-radius: @INPUT-RADIUS 0 0 @INPUT-RADIUS;
+    }
+    :root[editable]:rtl > caption {
+      border-radius: 0 @INPUT-RADIUS @INPUT-RADIUS 0;
+    }
+    
+	  :root:owns-popup[editable] > caption,
+	  :root[editable] > caption:focus
+    {  text-selection: @HIGHLIGHTTEXT @HIGHLIGHT; }    
+    
+    :root[editable] > button
+    {
+      background:@THREEDFACE;
+      border:1dip solid @THREEDBORDER;
+      border-left:none;
+      border-radius: 0 @INPUT-RADIUS @INPUT-RADIUS 0;
+    }
+    :root[editable]:rtl > button
+    {
+      border:1dip solid @THREEDBORDER;
+      border-left:none;
+      border-radius: @INPUT-RADIUS 0 0 @INPUT-RADIUS;
+    }
+    
+    :root[editable] > button:hover    { transition:none; background:@THREEDHOVER; }
+    :root[editable] > button:active   { background:@THREEDHOVER; }
+    :root[editable] > button:disabled { background:@THREEDDISABLED; }
+  
+    :root[multiple] > popup > option { padding:1dip 1dip 1dip 20dip; }
+    :root:rtl[multiple] > popup > option { padding:1dip 20dip 1dip 1dip; }
+
+    :root[multiple] > span.count 
+    {
+      padding:2dip 2dip 4dip 4dip;
+      margin:2dip;
+      border-left:1px threedshadow solid;
+      border-right:1px threedshadow solid;
+    }
+   
+  }
+
+
+@set std-select-popup < std-select-popup-base 
+{
+  /* popup select element */
+  :root
+  { 
+    font: system;
+    margin:0;
+    padding:0; 
+    border:1dip solid @THREEDBORDER;
+    background: @WINDOW;
+  }
+  
+  option { line-height:1.4em; padding: 1dip 0.5em; }
+  /*:root:not([multiple]) > popup > option { padding: 0 4dip; }*/
+  option:current
+  {
+    background-color:@HIGHLIGHT; color:@HIGHLIGHTTEXT;
+  }
+  
+  optgroup > caption 
+  { 
+    padding:1dip 3dip; 
+    font-weight:bold; 
+    color:@GRAYTEXT;
+  }
+  optgroup > option 
+  { 
+    padding-left:20dip; 
+  }
+  optgroup > option:rtl
+  { 
+    padding-right:20dip; 
+    padding-left:1dip; 
+  }
+}

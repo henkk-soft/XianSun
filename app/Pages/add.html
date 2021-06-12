@@ -38,7 +38,7 @@
         ishight:false,
         cookie:"",
         title:"",
-        csschoose:"",
+        csschoose:"body",
         xpathchoose:"",
         type:"str",
         con:"ischange",
@@ -69,7 +69,7 @@
           <br><br>
           <label>选择器(二选一)：</label>
           <br><br>
-          <editbox(csschoose)) caption="CSS选择器..."  style="width: 300px;"/>
+          <editbox(csschoose)) value="body" caption="CSS选择器..."  style="width: 300px;"/>
           <editbox(xpathchoose))  caption="xpath选择器..." style="width: 300px; position:relative;margin-top: -26px;left: 320px;"/>
           <br>
           <label>数据类型：&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;</label><label >通知条件：</label>
@@ -100,7 +100,7 @@
             <radio(history) value="changetime">每次改变</radio>
             <radio(history) hidden value="messgetime">每次通知</radio>
             <label>&emsp;&emsp;&emsp;&emsp;最大记录数：</label>&emsp;&emsp;
-            <input(historynum) type="number" min="2" max="30" step="1" value="5" style=" position:relative;margin-top: -4px">
+            <input(historynum) type="number" min="2" max="30" step="1" value="5" style="width: 60px; position:relative;margin-top: -8px">
           </hbox>
           
           <br><br>
