@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 
@@ -117,9 +116,8 @@ func setEventHandler() {
 		_w.Call("MessgeBox", sciter.NewValue(taskDelete(args[0].String())))
 		return sciter.NewValue()
 	})
-	_w.DefineFunction("RefTask", func(args ...*sciter.Value) *sciter.Value {
-
-		return sciter.NewValue()
+	_w.DefineFunction("GetClose", func(args ...*sciter.Value) *sciter.Value {
+		return sciter.NewValue(_config["softclose"].(int64) == 0)
 	})
 }
 func testRun_go(injson string) {
@@ -195,17 +193,6 @@ func configUpdate_go(injson string) {
 			openstartup()
 		}
 
-	}
-	if lastconfig["softclose"] != _config["softclose"] {
-		if _config["softclose"].(int64) == 0 {
-			winf, _ := ioutil.ReadFile("./app/window.tis")
-			winf = []byte(strings.Replace(string(winf), "ChangeWindow();//close", "CloseWindow();//close", 1))
-			ioutil.WriteFile("./app/window.tis", winf, 0666)
-		} else {
-			winf, _ := ioutil.ReadFile("./app/window.tis")
-			winf = []byte(strings.Replace(string(winf), "CloseWindow();//close", "ChangeWindow();//close", 1))
-			ioutil.WriteFile("./app/window.tis", winf, 0666)
-		}
 	}
 	_w.Call("MessgeBox", sciter.NewValue(msg))
 	_w.Call("loadhide")

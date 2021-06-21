@@ -3,7 +3,7 @@ view.isResizeable = false;
 view.windowIcon = self.url("../img/icon_32x32.png");
 view.trayIcon {
     image: self.loadImage(self.url("../img/icon_32x32.png")),
-    text: "Web Monitor Go"
+    text: "献 飧"
 };
 function CloseWindow(){
     view.trayIcon(#remove);
@@ -32,7 +32,12 @@ view << event trayicon-click (evt) {
     }     
 }
 event click $(btn.close){
-    CloseWindow();//close
+    if(view.GetClose()){
+        CloseWindow();
+    }else{
+        ChangeWindow();
+    }
+    //close
 }
 event click $(menu#tray > li#reveal) {
             ChangeWindow();

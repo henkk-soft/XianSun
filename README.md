@@ -5,7 +5,7 @@
 
 golang版本1.14或1.15，1.16应该不支持，其他版本未做测试。
 
-sciter tis以及go-sciter请选用对应版本，相应的sciter.dll文件需要做替换，这里的sciter.dll用的是4.4.7 版本，go-sciter请用sciter-api分支
+sciter用tis版本，注意go-sciter请选用对应版本，官网直接可下载的的是4.4.7 版本，go-sciter则用sciter-api分支
 
 
 ---
@@ -50,6 +50,8 @@ https://github.com/chromedp/chromedp
 https://github.com/tidwall/gjson
 
 https://github.com/mattn/go-sqlite3
+
+https://github.com/sergi/go-diff
 
 ---
 

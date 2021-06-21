@@ -37,7 +37,7 @@ class DateRange : Element
     return <popup>
       <div.start><widget|calendar :value={this.pstart}/>{ timeStart() } </div>
       <div.end><widget|calendar :value={this.pend}/>{ timeEnd() }</div>
-      <footer><button.apply>Apply</button><button.cancel>Cancel</button></footer>
+      <footer><button.apply>确定</button><button.cancel>取消</button></footer>
     </popup>;
   }
 
